@@ -1,0 +1,160 @@
+create database exercicio_banco;
+use exercicio_banco;
+ 
+create table Produto (
+	id int auto_increment primary key,
+	nome varchar(100),
+	preco decimal(10, 2),
+	estoque int
+);
+ 
+create table Cliente (
+	id int auto_increment primary key,
+	nome varchar(100),
+	email varchar(100),
+	cidade varchar(100)
+);
+ 
+create table Venda (
+	id int auto_increment primary key,
+	data_venda date,
+	id_cliente int,
+	id_produto int,
+	quantidade int,
+	valor_total decimal(10, 2)
+);
+ 
+insert into Produto
+(nome, preco, estoque)
+values
+('Tênis Nike', '249', '85'),
+('Celular', '1000', '100'),
+('Notebook', '5500', '50'),
+('TV', '3000', '15'),
+('Mouse', '50', '60'),
+('Teclado', '60', '40');
+ 
+insert into Cliente
+(nome, email, cidade)
+values
+('Gean', 'geangg@gmail.com', 'Campo Grande'),
+('Maria Souza', 'mamasou@gmail.com', 'São Paulo'),
+('Alex', 'alexinho@gmail.com', 'Dourados'),
+('Denilson', 'denis@gmail.com', 'Três Lagoas'),
+('João Silva', 'silvao@gmail.com', 'São Paulo'),
+('Giovana', 'giova@gmail.com', 'São Paulo');
+ 
+insert into Venda
+(data_venda, id_cliente, id_produto, quantidade, valor_total)
+values
+('2024-03-12', '5', '1', '5', '1245'),
+('2024-04-05', '2', '2', '20', '1000'),
+('2024-10-01', '1', '3', '2', '11000'),
+('2024-09-02', '3', '3', '3', '9000'),
+('2024-04-10', '5', '5', '13', '650'),
+('2024-10-01', '4', '1', '2', '498'),
+('2024-10-01', '5', '3', '1', '5500');
+ 
+-- EXERCICIO 1
+-- Faça uma consulta que mostre o nome de todos
+-- os produtos junto com a quantidade de estoque de cada um.
+select nome, estoque from Produto;
+ 
+-- EXERCICIO 2
+-- Liste o nome e o e-mail dos clientes que moram na cidade de 'São Paulo'."
+select nome, email from Cliente
+where cidade = 'São Paulo';
+ 
+-- EXERCICIO 3
+-- Recupere todas as vendas realizadas pelo cliente com o nome 'João Silva',
+-- mostrando a data da venda, o produto comprado e o valor total
+select c.nome as cliente, v.data_venda, p.nome as produto, v.valor_total from venda v
+inner join produto p on p.id = v.id_produto
+inner join cliente c on c.id = v.id_cliente
+where c.nome = 'João Silva';
+ 
+-- EXERCICIO 4
+-- Atualize o preço do produto 'Tênis Nike' para R$ 349,99
+update produto
+set preco = '349.99'
+where nome = 'Tênis Nike';
+ 
+-- EXERCICIO 5
+-- Insira um novo produto chamado 'Bola de Futebol Adidas' com o
+-- preço de R$ 89,90 e quantidade de 50 unidades no estoque.
+insert into Produto
+(nome, preco, estoque)
+values
+('Bola de Futebol Adidas', '89.90', '50');
+ 
+-- EXERCICIO 6
+-- Faça uma consulta que retorne o total de vendas realizadas no dia '2024-10-01'.
+select data_venda, sum(valor_total) as total_venda from venda v
+where data_venda = '2024-10-01';
+ 
+-- EXERCICIO 7
+-- Liste o nome de cada cliente e o valor total das compras realizadas por ele.
+select c.nome, sum(v.valor_total) from cliente c
+inner join venda v on v.id_cliente = c.id
+group by nome;
+ 
+-- EXERCICIO 8
+-- Crie uma instrução que diminua a quantidade de estoque do produto
+-- vendido em uma determinada venda.
+update produto
+set estoque = estoque - 1
+where id = 1;
+ 
+-- EXERCICIO 9
+-- Faça uma consulta que retorne o produto mais vendido (em quantidade) até o momento
+select p.nome, v.quantidade
+from venda v
+inner join produto p on v.id_produto = p.id
+order by v.quantidade desc
+limit 1;
+ 
+-- EXERCICIO 10
+-- Insira uma nova venda para o cliente com id 3, do produto com id 5, na
+-- quantidade de 2 unidades, com data de hoje e valor total calculado corretamente
+insert into Venda
+(data_venda, id_cliente, id_produto, quantidade, valor_total)
+values
+('2024-10-21', '3', '5', '2', '100');
+ 
+-- EXERCICIO 11
+-- Crie uma consulta que liste todos os produtos que ainda não foram vendidos,
+-- ou seja, produtos que não aparecem na tabela de vendas.
+select * from venda v
+right join produto p on p.id = v.id_produto
+where v.id is null;
+ 
+-- EXERCICIO 12
+-- Liste todas as vendas realizadas, mostrando a data, o nome do
+-- cliente e o valor total da venda.
+select v.data_venda, c.nome as cliente, sum(v.valor_total) from venda v
+inner join cliente c on c.id = v.id_cliente
+group by c.nome;
+ 
+-- EXERCICIO 13
+-- Faça uma consulta que retorne a soma de todas as quantidades
+-- de produtos em estoque na loja
+select sum(estoque) from produto p;
+ 
+-- EXERCICIO 14
+-- Crie uma consulta que retorne o nome do cliente que
+-- mais gastou em compras no total.
+select c.nome, v.valor_total
+from cliente c
+inner join venda v on c.id = v.id_cliente
+order by v.valor_total desc
+limit 1;
+ 
+-- EXERCICIO 15
+-- Atualize a cidade do cliente com o nome 'Maria Souza' para 'Rio de Janeiro
+update cliente
+set cidade = 'Rio de Janeiro'
+where nome = 'Maria Souza';
+ 
+select * from produto;
+select * from cliente;
+select * from venda;
